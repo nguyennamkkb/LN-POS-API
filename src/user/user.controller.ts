@@ -32,7 +32,7 @@ export class UserController {
     @Body() item: UserEntity,
   ): Promise<ApiResponse<UserEntity>> {
     try {
-      writeLogToFile(`UserController signup input ${item}`)
+      writeLogToFile(`UserController signup input ${JSON.stringify(item)}`)
       const findUSer = await this.services.findByPhone(item.phone);
       if (findUSer.length == 0) {
         const res = await this.services.create(item);
@@ -49,13 +49,15 @@ export class UserController {
   async findAll(
     @Query('page') page: number = 1,
     @Query('limit') limit: number = 10,
+    @Query() params,
   ): Promise<ApiResponse<UserEntity[]>> {
     try {
+      writeLogToFile(`UserController findAll input ${JSON.stringify(params)}`)
       const [res, totalCount] = await this.services.findAll(
         page,
         limit,
       );
-      return {
+      var response = {
         statusCode: 200,
         message: 'Thành công!',
         data: res,
@@ -64,8 +66,12 @@ export class UserController {
           currentPage: page,
           totalPages: Math.ceil(totalCount / limit),
         },
-      };
+      }
+      writeLogToFile(`UserController findAll res ${JSON.stringify(response)}`)
+      return response;
+        
     } catch (error) {
+      writeLogToFile(`UserController findAll catch ${JSON.stringify(error)}`)
       return ResponseHelper.error(0, error);
     }
   }
