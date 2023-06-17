@@ -28,7 +28,7 @@ export class UserEntity {
   @Column()
   password: string;
 
-  @Column()
+  @Column({ default: 1 })
   status: number;
 
   @Column({type: 'bigint'})

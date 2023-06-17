@@ -1,3 +1,4 @@
+import { writeLogToFile } from './logger';
 import { ApiResponse } from './response.interface';
 
 export class ResponseHelper {
@@ -10,6 +11,13 @@ export class ResponseHelper {
   }
 
   static error<T>(code: number, message: string): ApiResponse<T> {
+    return {
+      statusCode: code,
+      message: message,
+      data: null,
+    };
+  }
+  static customise<T>(code: number, message: string): ApiResponse<T> {
     return {
       statusCode: code,
       message: message,

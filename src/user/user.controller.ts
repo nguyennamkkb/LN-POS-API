@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
   Query,
+  Patch,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { UserEntity } from './user.entity/user.entity';
@@ -23,22 +24,37 @@ import { writeLogToFile } from './../../helper/common/logger';
 
 @Controller('user')
 export class UserController {
-  constructor(private readonly services: UserService) {}
+  constructor(private readonly services: UserService) { }
 
 
   @Public()
-  @Post('signup')
-  async create(
-    @Body() item: UserEntity,
-  ): Promise<ApiResponse<UserEntity>> {
+  @Post()
+  async create(@Body() item: UserEntity): Promise<ApiResponse<UserEntity>> {
     try {
       writeLogToFile(`UserController signup input ${JSON.stringify(item)}`)
       const findUSer = await this.services.findByPhone(item.phone);
       if (findUSer.length == 0) {
+        const mk = Common.MD5Hash(Common.keyApp+item.password)
+        item.password = mk
         const res = await this.services.create(item);
         return ResponseHelper.success(res);
       } else {
         return ResponseHelper.error(0, 'Số điện thoại đã tồn tại');
+      }
+    } catch (error) {
+      return ResponseHelper.error(0, error);
+    }
+  }
+  @Public()
+  @Post('checkuser')
+  async checkuser(@Body() item: UserEntity): Promise<ApiResponse<UserEntity>> {
+    try {
+      writeLogToFile(`UserController checkuser input ${JSON.stringify(item)}`)
+      const findUSer = await this.services.findByPhone(item.phone);
+      if (findUSer.length > 0) {
+        return ResponseHelper.error(0, 'Số điện thoại đã tồn tại');
+      } else {
+        return ResponseHelper.customise(1, "OK");
       }
     } catch (error) {
       return ResponseHelper.error(0, error);
@@ -49,7 +65,7 @@ export class UserController {
   async findAll(
     @Query('page') page: number = 1,
     @Query('limit') limit: number = 10,
-    @Query() params,
+    @Query() params
   ): Promise<ApiResponse<UserEntity[]>> {
     try {
       writeLogToFile(`UserController findAll input ${JSON.stringify(params)}`)
@@ -69,7 +85,7 @@ export class UserController {
       }
       writeLogToFile(`UserController findAll res ${JSON.stringify(response)}`)
       return response;
-        
+
     } catch (error) {
       writeLogToFile(`UserController findAll catch ${JSON.stringify(error)}`)
       return ResponseHelper.error(0, error);
@@ -87,9 +103,7 @@ export class UserController {
   }
 
   @Put()
-  async update(
-    @Body() item: UserEntity,
-  ): Promise<ApiResponse<UpdateResult>> {
+  async update(@Body() item: UserEntity): Promise<ApiResponse<UpdateResult>> {
     try {
       const res = await this.services.update(item);
       return ResponseHelper.success(res);

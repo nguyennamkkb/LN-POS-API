@@ -27,21 +27,18 @@ export class AuthController {
   @Post('signin')
   async signIn(@Body() item: UserEntity): Promise<ApiResponse<UserEntity>> {
     try {
-      const res = await this.authService.signIn(item.phone, item.password);
-      return ResponseHelper.success(res);
+      const mk = Common.MD5Hash(Common.keyApp+item.password)
+      const res = await this.authService.signIn(item.phone, mk)
+      if (res) {
+        return ResponseHelper.success(res);
+      }else {
+        return ResponseHelper.error(0, "Kiểm tra lại số điện thoại hoặc mật khẩu");
+      }
+      // return ResponseHelper.success(res);
+      
     } catch (error) {
       return ResponseHelper.error(0, error);
     }
   }
 
-  @Public()
-  @Get('profile')
-  getProfile(@Query() req) {
-    try {
-        const res = req;
-        return ResponseHelper.success(res);
-      } catch (error) {
-        return ResponseHelper.error(0, error);
-      }
-  }
 }
