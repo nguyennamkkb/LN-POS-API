@@ -1,3 +1,5 @@
+import { writeLogToFile } from "./logger";
+
 var md5 = require('md5');
 export class Common {
   static keyApp: string = 'XY50829317681RT3RUH3EZZ84'; //50829317681RT3RUH3EZ
@@ -64,7 +66,7 @@ export class Common {
     const hours = String(currentDate.getHours()).padStart(2, '0');
     const minutes = String(currentDate.getMinutes()).padStart(2, '0');
     const seconds = String(currentDate.getSeconds()).padStart(2, '0');
-  
+
     return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
   }
   static getFileLogName(): string {
@@ -72,7 +74,21 @@ export class Common {
     const day = String(currentDate.getDate()).padStart(2, '0');
     const month = String(currentDate.getMonth() + 1).padStart(2, '0'); // Month is zero-based
     const year = String(currentDate.getFullYear());
-  
+
     return `${year}-${month}-${day}`;
+  }
+  static async verifyRequest(cksRequest: String, timeRequest: number): Promise<boolean> {
+    try {
+      const cksApp = this.MD5Hash(this.getKeyApp() + timeRequest)
+      writeLogToFile(`verifyRequest cksRequest:${cksRequest}, cksApp:${cksApp}`)
+      if (cksApp == cksRequest) {
+        return true
+      } else {
+        return false
+      }
+    } catch (error) {
+      writeLogToFile(`verifyRequest catch ${error}`)
+      return  false
+    }
   }
 }

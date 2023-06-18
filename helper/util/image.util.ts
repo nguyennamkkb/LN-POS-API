@@ -14,7 +14,7 @@ export class ImageUtil {
 
     const fileExtension = matches[1];
     const base64Image = matches[2];
-    const fileName = `${Date.now()}.${fileExtension}`;
+    const fileName = `${Date.now()}.jpeg`;
     const filePath = `upload/${fileName}`;
 
     // Convert base64 to buffer

@@ -16,6 +16,5 @@ export async function writeLogToFile(log: string): Promise<void> {
     // Append the log to the file
 
     const headLog = timeNow + " " + Common.AppName + ": "
-
     await fs.appendFileSync(logFilePath, headLog + log + '\n');
 }

@@ -21,6 +21,7 @@ import { ImageUtil } from '../../helper/util/image.util';
 const fs = require('fs');
 
 import { writeLogToFile } from './../../helper/common/logger';
+import { UserRequest } from './user.entity/user.request';
 
 @Controller('user')
 export class UserController {
@@ -29,17 +30,24 @@ export class UserController {
 
   @Public()
   @Post()
-  async create(@Body() item: UserEntity): Promise<ApiResponse<UserEntity>> {
+  async create(@Body() item: UserRequest): Promise<ApiResponse<UserEntity>> {
     try {
-      writeLogToFile(`UserController signup input ${JSON.stringify(item)}`)
-      const findUSer = await this.services.findByPhone(item.phone);
-      if (findUSer.length == 0) {
-        const mk = Common.MD5Hash(Common.keyApp+item.password)
-        item.password = mk
-        const res = await this.services.create(item);
-        return ResponseHelper.success(res);
+      console.log("111111")
+      if (await Common.verifyRequest(item.cksRequest, item.timeRequest)) {
+        console.log("222222")
+        // writeLogToFile(`UserController signup input ${JSON.stringify(item)}`)
+        // const findUSer = await this.services.findByPhone(item.phone);
+        // if (findUSer.length == 0) {
+        //   const mk = Common.MD5Hash(Common.keyApp + item.password)
+        //   item.password = mk
+        //   const res = await this.services.create(item);
+        //   return ResponseHelper.success(res);
+        // } else {
+        //   return ResponseHelper.error(0, 'Số điện thoại đã tồn tại');
+        // }
       } else {
-        return ResponseHelper.error(0, 'Số điện thoại đã tồn tại');
+        console.log("33333")
+        return ResponseHelper.error(0, 'Sai cks');
       }
     } catch (error) {
       return ResponseHelper.error(0, error);
@@ -47,15 +55,22 @@ export class UserController {
   }
   @Public()
   @Post('checkuser')
-  async checkuser(@Body() item: UserEntity): Promise<ApiResponse<UserEntity>> {
+  async checkuser(@Body() item: UserRequest): Promise<ApiResponse<UserEntity>> {
     try {
-      writeLogToFile(`UserController checkuser input ${JSON.stringify(item)}`)
-      const findUSer = await this.services.findByPhone(item.phone);
-      if (findUSer.length > 0) {
-        return ResponseHelper.error(0, 'Số điện thoại đã tồn tại');
-      } else {
-        return ResponseHelper.customise(1, "OK");
+      
+      if (await Common.verifyRequest(item.cksRequest, item.timeRequest)) {
+  
+        writeLogToFile(`UserController checkuser input ${JSON.stringify(item)}`)
+        const findUSer = await this.services.findByPhone(item.phone);
+        if (findUSer.length > 0) {
+          return ResponseHelper.error(0, 'Số điện thoại đã tồn tại');
+        } else {
+          return ResponseHelper.customise(1, "OK");
+        }
+      }else {
+        return ResponseHelper.error(0, 'Sai cks');
       }
+
     } catch (error) {
       return ResponseHelper.error(0, error);
     }
