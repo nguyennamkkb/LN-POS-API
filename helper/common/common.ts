@@ -77,10 +77,12 @@ export class Common {
 
     return `${year}-${month}-${day}`;
   }
+
   static async verifyRequest(cksRequest: String, timeRequest: number): Promise<boolean> {
     try {
-      const cksApp = this.MD5Hash(this.getKeyApp() + timeRequest)
-      writeLogToFile(`verifyRequest cksRequest:${cksRequest}, cksApp:${cksApp}`)
+      const dataCks = this.getKeyApp() + timeRequest
+      const cksApp = this.MD5Hash(dataCks)
+      writeLogToFile(`verifyRequest cksRequest:${cksRequest}, cksApp:${cksApp}, keyapp:${this.getKeyApp()}, timeRequest:${timeRequest}`)
       if (cksApp == cksRequest) {
         return true
       } else {
