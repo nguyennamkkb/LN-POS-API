@@ -8,67 +8,64 @@ import {
   Delete,
   Query,
   Patch,
-} from '@nestjs/common';
-import { UserService } from './user.service';
-import { UserEntity } from './user.entity/user.entity';
-import { ResponseHelper } from 'helper/common/response.helper';
-import { ApiResponse } from 'helper/common/response.interface';
-import { UpdateResult } from 'typeorm/query-builder/result/UpdateResult';
-import { Common } from 'helper/common/common';
-import { Public } from 'src/auth/public.decorator';
-import { ImageUtil } from '../../helper/util/image.util';
+} from "@nestjs/common";
+import { UserService } from "./user.service";
+import { UserEntity } from "./user.entity/user.entity";
+import { ResponseHelper } from "helper/common/response.helper";
+import { ApiResponse } from "helper/common/response.interface";
+import { UpdateResult } from "typeorm/query-builder/result/UpdateResult";
+import { Common } from "helper/common/common";
+import { Public } from "src/auth/public.decorator";
+import { ImageUtil } from "../../helper/util/image.util";
 
-const fs = require('fs');
+const fs = require("fs");
 
-import { writeLogToFile } from './../../helper/common/logger';
-import { UserRequest } from './user.entity/user.request';
+import { writeLogToFile } from "./../../helper/common/logger";
+import { UserRequest } from "./user.entity/user.request";
 
-@Controller('user')
+@Controller("user")
 export class UserController {
-  constructor(private readonly services: UserService) { }
-
+  constructor(private readonly services: UserService) {}
 
   @Public()
   @Post()
   async create(@Body() item: UserRequest): Promise<ApiResponse<UserEntity>> {
     try {
-
       if (await Common.verifyRequest(item.cksRequest, item.timeRequest)) {
-        writeLogToFile(`UserController signup input ${JSON.stringify(item)}`)
+        writeLogToFile(`UserController signup input ${JSON.stringify(item)}`);
         const findUSer = await this.services.findByPhone(item.phone);
         if (findUSer.length == 0) {
-          const mk = Common.MD5Hash(Common.keyApp + item.password)
-          item.password = mk
+          const mk = Common.MD5Hash(Common.keyApp + item.password);
+          item.password = mk;
           const res = await this.services.create(item);
           return ResponseHelper.success(res);
         } else {
-          return ResponseHelper.error(0, 'Số điện thoại đã tồn tại');
+          return ResponseHelper.error(0, "Số điện thoại đã tồn tại");
         }
       } else {
-        return ResponseHelper.error(0, 'Sai cks');
+        return ResponseHelper.error(0, "Sai cks");
       }
     } catch (error) {
       return ResponseHelper.error(0, error);
     }
   }
   @Public()
-  @Post('checkuser')
-  async checkuser(@Body() item: UserRequest): Promise<ApiResponse<UserEntity>> {
+  @Post("checkuser")
+  async checkuser(@Body() item): Promise<ApiResponse<UserEntity>> {
     try {
-
       if (await Common.verifyRequest(item.cksRequest, item.timeRequest)) {
-
-        writeLogToFile(`UserController checkuser input ${JSON.stringify(item)}`)
+        writeLogToFile(
+          `UserController checkuser input ${JSON.stringify(item)}`
+        );
         const findUSer = await this.services.findByPhone(item.phone);
         if (findUSer.length > 0) {
-          return ResponseHelper.error(0, 'Số điện thoại đã tồn tại');
+          return ResponseHelper.error(0, "Số điện thoại đã tồn tại");
         } else {
           return ResponseHelper.customise(1, "OK");
         }
       } else {
-        return ResponseHelper.error(0, 'Sai cks');
+        return ResponseHelper.error(0, "Sai cks");
       }
-
     } catch (error) {
       return ResponseHelper.error(0, error);
     }
@@ -76,38 +73,42 @@ export class UserController {
 
   @Get()
   async findAll(
-    @Query('page') page: number = 1,
-    @Query('limit') limit: number = 10,
+    @Query("page") page: number = 1,
+    @Query("limit") limit: number = 10,
     @Query() params
   ): Promise<ApiResponse<UserEntity[]>> {
     try {
       if (await Common.verifyRequest(params.cksRequest, params.timeRequest)) {
-        writeLogToFile(`UserController findAll input ${JSON.stringify(params)}`)
-        const [res, totalCount] = await this.services.findAll(
-          page,
-          limit,
+        writeLogToFile(
+          `UserController findAll input ${JSON.stringify(params)}`
         );
+        const [res, totalCount] = await this.services.findAll(page, limit);
         var response = {
           statusCode: 200,
-          message: 'Thành công!',
+          message: "Thành công!",
           data: res,
           meta: {
             totalCount,
             currentPage: page,
             totalPages: Math.ceil(totalCount / limit),
           },
-        }
-        writeLogToFile(`UserController findAll res ${JSON.stringify(response)}`)
+        };
+        writeLogToFile(
+          `UserController findAll res ${JSON.stringify(response)}`
+        );
         return response;
       }
     } catch (error) {
-      writeLogToFile(`UserController findAll catch ${JSON.stringify(error)}`)
+      writeLogToFile(`UserController findAll catch ${JSON.stringify(error)}`);
       return ResponseHelper.error(0, error);
     }
   }
 
-  @Get(':id')
-  async findOne(@Param() param, @Query() query): Promise<ApiResponse<UserEntity>> {
+  @Get(":id")
+  async findOne(
+    @Param() param,
+    @Query() query
+  ): Promise<ApiResponse<UserEntity>> {
     try {
       if (await Common.verifyRequest(query.cksRequest, query.timeRequest)) {
         const res = await this.services.findOne(param.id);
@@ -121,11 +122,11 @@ export class UserController {
   @Put()
   async update(@Body() body): Promise<ApiResponse<UpdateResult>> {
     try {
-      const user: UserEntity = body
-      writeLogToFile(`UserController update input ${JSON.stringify(body)}`)
+      const user: UserEntity = body;
+      writeLogToFile(`UserController update input ${JSON.stringify(body)}`);
       if (await Common.verifyRequest(body.cksRequest, body.timeRequest)) {
-        delete user['cksRequest']
-        delete user['timeRequest']
+        delete user["cksRequest"];
+        delete user["timeRequest"];
         const res = await this.services.update(body);
         return ResponseHelper.success(res);
       }
@@ -134,7 +135,7 @@ export class UserController {
     }
   }
 
-  @Delete(':id')
+  @Delete(":id")
   async remove(@Param() param, @Query() query) {
     try {
       if (await Common.verifyRequest(query.cksRequest, query.timeRequest)) {
