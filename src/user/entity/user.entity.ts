@@ -16,13 +16,13 @@ export class UserEntity {
   @Column()
   address: string;
   
-  @Column({length: 10})
+  @Column({length: 10,nullable: true, default: null})
   bankCode: string;
   
-  @Column({length: 30})
+  @Column({length: 30,nullable: true, default:""})
   accountNumber: string;
 
-  @Column()
+  @Column({nullable: true})
   email: string;
 
   @Column()

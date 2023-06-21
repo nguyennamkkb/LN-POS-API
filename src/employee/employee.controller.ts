@@ -10,12 +10,12 @@ import {
     Query,
   } from '@nestjs/common';
   import { EmployeeService } from './employee.service';
-  import { EmployeeEntity } from './employee.entity/employee.entity';
+  import { EmployeeEntity } from './entity/employee.entity';
   import { ResponseHelper } from 'helper/common/response.helper';
   import { ApiResponse } from 'helper/common/response.interface';
   import { UpdateResult } from 'typeorm/query-builder/result/UpdateResult';
   import {Common} from './../../helper/common/common'
-import { UserEntity } from 'src/user/user.entity/user.entity';
+import { UserEntity } from 'src/user/entity/user.entity';
 import { UserService } from 'src/user/user.service';
   
   @Controller('employee')

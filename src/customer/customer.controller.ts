@@ -9,7 +9,7 @@ import {
   Query,
 } from '@nestjs/common';
 import { CustomerService } from './customer.service';
-import { CustomerEntity } from './customer.entity/customer.entity';
+import { CustomerEntity } from './entity/customer.entity';
 import { ResponseHelper } from 'helper/common/response.helper';
 import { ApiResponse } from 'helper/common/response.interface';
 import { UpdateResult } from 'typeorm/query-builder/result/UpdateResult';

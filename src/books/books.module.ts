@@ -1,13 +1,13 @@
 import { Module } from '@nestjs/common';
 import { BooksService } from './books.service';
 import { BooksController } from './books.controller';
-import { BooksEntity } from './books.entity/books.entity';
+import { BooksEntity } from './entity/books.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { EmployeeEntity } from 'src/employee/employee.entity/employee.entity';
-import { CustomerEntity } from 'src/customer/customer.entity/customer.entity';
+import { EmployeeEntity } from 'src/employee/entity/employee.entity';
+import { CustomerEntity } from 'src/customer/entity/customer.entity';
 import { EmployeeService } from 'src/employee/employee.service';
 import { CustomerService } from 'src/customer/customer.service';
-import { UserEntity } from 'src/user/user.entity/user.entity';
+import { UserEntity } from 'src/user/entity/user.entity';
 import { UserService } from 'src/user/user.service';
 
 @Module({
