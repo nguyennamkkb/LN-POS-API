@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import * as fs from 'fs-extra';
+import { Common } from 'helper/common/common';
 import * as sharp from 'sharp';
 
 
@@ -14,7 +15,7 @@ export class ImageUtil {
 
     const fileExtension = matches[1];
     const base64Image = matches[2];
-    const fileName = `${Date.now()}.jpeg`;
+    const fileName = `${Common.makeRandomStringWithLength(5)+Date.now()}.jpeg`;
     const filePath = `upload/${fileName}`;
 
     // Convert base64 to buffer

@@ -10,7 +10,6 @@ import {
   Patch,
 } from "@nestjs/common";
 import { UserService } from "./user.service";
-import { UserEntity } from "./user.entity/user.entity";
 import { ResponseHelper } from "helper/common/response.helper";
 import { ApiResponse } from "helper/common/response.interface";
 import { UpdateResult } from "typeorm/query-builder/result/UpdateResult";
@@ -19,9 +18,9 @@ import { Public } from "src/auth/public.decorator";
 import { ImageUtil } from "../../helper/util/image.util";
 
 const fs = require("fs");
-
 import { writeLogToFile } from "./../../helper/common/logger";
 import { UserRequest } from "./user.entity/user.request";
+import { UserEntity } from "./entity/user.entity";
 
 @Controller("user")
 export class UserController {
@@ -50,8 +49,8 @@ export class UserController {
     }
   }
   @Public()
-  @Post("checkuser")
-  async checkuser(@Body() item): Promise<ApiResponse<UserEntity>> {
+  @Post('checkuser')
+  async checkuser(@Body() item: any): Promise<ApiResponse<UserEntity>> {
     try {
       if (await Common.verifyRequest(item.cksRequest, item.timeRequest)) {
         writeLogToFile(
@@ -61,7 +60,7 @@ export class UserController {
         if (findUSer.length > 0) {
           return ResponseHelper.error(0, "Số điện thoại đã tồn tại");
         } else {
-          return ResponseHelper.customise(1, "OK");
+          return ResponseHelper.customise(200, "OK");
         }
       } else {
         return ResponseHelper.error(0, "Sai cks");
@@ -111,6 +110,7 @@ export class UserController {
   ): Promise<ApiResponse<UserEntity>> {
     try {
       if (await Common.verifyRequest(query.cksRequest, query.timeRequest)) {
+
         const res = await this.services.findOne(param.id);
         return ResponseHelper.success(res);
       }
@@ -122,11 +122,10 @@ export class UserController {
   @Put()
   async update(@Body() body): Promise<ApiResponse<UpdateResult>> {
     try {
-      const user: UserEntity = body;
-      writeLogToFile(`UserController update input ${JSON.stringify(body)}`);
+      writeLogToFile(`UserController update input ${JSON.stringify(body)}`)
       if (await Common.verifyRequest(body.cksRequest, body.timeRequest)) {
-        delete user["cksRequest"];
-        delete user["timeRequest"];
+        delete body['cksRequest']
+        delete body['timeRequest']
         const res = await this.services.update(body);
         return ResponseHelper.success(res);
       }

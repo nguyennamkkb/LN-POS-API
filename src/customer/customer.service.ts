@@ -2,7 +2,7 @@ import { Injectable, Inject } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Long, Repository, Like, LessThan, MoreThan } from 'typeorm';
 import { UpdateResult, DeleteResult } from  'typeorm';
-import { CustomerEntity } from './customer.entity/customer.entity';
+import { CustomerEntity } from './entity/customer.entity';
 import {Common} from './../../helper/common/common'
 
 @Injectable()

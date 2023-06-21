@@ -13,6 +13,7 @@ async function bootstrap() {
     enableDebugMessages: true
   }));
   app.useGlobalFilters(new HttpExceptionFilter());
+  app.useGlobalPipes(new ValidationPipe());
   await app.listen(3456);
 }
 bootstrap();
