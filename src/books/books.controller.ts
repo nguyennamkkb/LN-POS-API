@@ -38,10 +38,12 @@ export class BooksController {
           const res = await this.services.create(body);
           return ResponseHelper.success(res);
         } else {
-          return ResponseHelper.error(0,"Mã cửa hàng/nhân viên/khach hàng không tồn tại");
+          return ResponseHelper.error(
+            0,
+            "Mã cửa hàng/nhân viên/khach hàng không tồn tại"
+          );
         }
       }
-      
     } catch (error) {
       return ResponseHelper.error(0, error);
     }
@@ -95,25 +97,21 @@ export class BooksController {
     try {
       if (await Common.verifyRequest(body.cksRequest, body.timeRequest)) {
         const book = await this.services.findOne(body.id);
+        if (book.status == 4) {
+          return ResponseHelper.error(0, "Lỗi");
+        }
+        const updateBook = await this.services.update(body);
+        
+        if (updateBook.affected == 1 && book.status != 4 && body.status == 4) {
+          const customer = await this.customerServices.findOne(body.idCustomer);
+          customer.loyalty = customer.loyalty + book.amount;
+          const updateCustomer = await this.customerServices.update(customer);
 
-        if (book.status != 4 && body.status != 4) {
-          const updateBook = await this.services.update(body);
-
-          if (updateBook.affected == 1) {
-            const customer = await this.customerServices.findOne(
-              body.idCustomer
-            );
-            customer.loyalty = customer.loyalty + book.amount;
-            const updateCustomer = await this.customerServices.update(customer);
-
-            if (updateCustomer.affected == 1) {
-              return ResponseHelper.success(200, "Thành công");
-            }
-          }
-
-          if (updateBook.affected == 1) {
+          if (updateCustomer.affected == 1) {
             return ResponseHelper.success(200, "Thành công");
           }
+        } else if (updateBook.affected == 1) {
+          return ResponseHelper.success(updateBook);
         }
       }
       return ResponseHelper.error(0, "Lỗi");

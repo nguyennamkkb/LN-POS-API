@@ -25,18 +25,21 @@ export class ImagesController {
   @Get("viewimage/:filename")
   async viewImage(
     @Param("filename") filename: string,
-    @Res() res: Response
+    @Res() res: Response,
+    @Query() query
   ): Promise<void> {
     try {
-      const imagePath = path.join(
-        __dirname,
-        "..",
-        "..",
-        "..",
-        "upload",
-        filename + ".jpeg"
-      );
-      res.sendFile(imagePath);
+      if (Common.verifyRequest(query.cksRequest, query.timeRequest)) {
+        const imagePath = path.join(
+          __dirname,
+          "..",
+          "..",
+          "..",
+          "upload",
+          filename + ".jpeg"
+        );
+        res.sendFile(imagePath);
+      }
     } catch (error) {
       writeLogToFile(`viewImage catch error ${JSON.stringify(error)}`);
     }
