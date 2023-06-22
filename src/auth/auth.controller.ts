@@ -25,8 +25,9 @@ export class AuthController {
 
   @Public()
   @Post('signin')
-  async signIn(@Body() item: UserEntity): Promise<ApiResponse<UserEntity>> {
+  async signIn(@Body() item): Promise<ApiResponse<UserEntity>> {
     try {
+      
       const mk = Common.MD5Hash(Common.keyApp+item.password)
       const res = await this.authService.signIn(item.phone, mk)
       if (res) {

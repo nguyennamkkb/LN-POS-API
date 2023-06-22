@@ -30,10 +30,9 @@ export class EmployeeService {
         return [res, totalCount];
     }
 
-    async findOne(_id: number): Promise<EmployeeEntity[]> {
-        return await this.repository.find({
-            where: [{ "id": _id }]
-        });
+    async findOne(id: number): Promise<EmployeeEntity> {
+        const res = await this.repository.findOne({ where: { "id": id } });
+        return res ? res : null;
     }
     async create(item: EmployeeEntity): Promise<EmployeeEntity>  {
         item.createAt = Date.now().toString()

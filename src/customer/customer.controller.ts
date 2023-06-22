@@ -44,53 +44,64 @@ export class CustomerController {
   async findAll(
     @Query('page') page: number = 1,
     @Query('limit') limit: number = 10,
-    @Query() params,
+    @Query() query,
   ): Promise<ApiResponse<CustomerEntity[]>> {
     try {
-      const [res, totalCount] = await this.services.findAll(page, limit, params);
-      return {
-        statusCode: 200,
-        message: 'Thành công!',
-        data: res,
-        meta: {
-          totalCount,
-          currentPage: page,
-          totalPages: Math.ceil(totalCount / limit),
-        },
-      };
+      if (await Common.verifyRequest(query.cksRequest, query.timeRequest)) {
+        const [res, totalCount] = await this.services.findAll(page, limit, query);
+        return {
+          statusCode: 200,
+          message: 'Thành công!',
+          data: res,
+          meta: {
+            totalCount,
+            currentPage: page,
+            totalPages: Math.ceil(totalCount / limit),
+          },
+        };
+      }
     } catch (error) {
       return ResponseHelper.error(0, error);
     }
   }
 
   @Get(':id')
-  async findOne(@Param() param): Promise<ApiResponse<CustomerEntity[]>> {
+  async findOne(@Param() param, @Query() query): Promise<ApiResponse<CustomerEntity>> {
     try {
-      const res = await this.services.findOne(param.id);
-      return ResponseHelper.success(res);
+      if (await Common.verifyRequest(query.cksRequest, query.timeRequest)) {
+        const res = await this.services.findOne(param.id);
+        return ResponseHelper.success(res);
+      }      
     } catch (error) {
       return ResponseHelper.error(0, error);
     }
   }
   @Put()
   async update(
-    @Body() item: CustomerEntity,
+    @Body() body,
   ): Promise<ApiResponse<UpdateResult>> {
     try {
-      const res = await this.services.update(item);
-      return ResponseHelper.success(res);
+      if (await Common.verifyRequest(body.cksRequest, body.timeRequest)) {
+        const res = await this.services.update(body);
+        return ResponseHelper.success(res)
+      }
     } catch (error) {
       return ResponseHelper.error(0, error);
     }
   }
 
   @Delete(':id')
-  async remove(@Param() param) {
+  async remove(@Param() param,  @Query() query) {
     try {
-      const res = await this.services.remove(param.id);
-      return ResponseHelper.success(res);
+      if (await Common.verifyRequest(query.cksRequest, query.timeRequest)) {
+        const res = await this.services.remove(param.id);
+        return ResponseHelper.success(res);
+      }
+      
     } catch (error) {
       return ResponseHelper.error(0, error);
     }
   }
+
+
 }
