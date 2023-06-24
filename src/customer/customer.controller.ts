@@ -82,6 +82,8 @@ export class CustomerController {
   ): Promise<ApiResponse<UpdateResult>> {
     try {
       if (await Common.verifyRequest(body.cksRequest, body.timeRequest)) {
+        delete body["cksRequest"];
+        delete body["timeRequest"];
         const res = await this.services.update(body);
         return ResponseHelper.success(res)
       }

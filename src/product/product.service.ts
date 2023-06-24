@@ -4,6 +4,7 @@ import { Long, Repository, Like, LessThan, MoreThan } from 'typeorm';
 import { UpdateResult, DeleteResult } from  'typeorm';
 import { ProductEntity } from './entity/product.entity';
 import {Common} from './../../helper/common/common'
+import { log } from 'console';
 
 @Injectable()
 export class ProductService {
@@ -36,7 +37,12 @@ export class ProductService {
     }
     async update(item: ProductEntity): Promise<UpdateResult> {
         item.updateAt = Date.now().toString()
-        return await this.repository.update(item.id, item)
+        try {
+            return await this.repository.update(item.id, item)
+        } catch (error) {
+            log(error)
+        }
+        // return await this.repository.update(item.id, item)
     }
 
     async remove(id: number): Promise<DeleteResult> {

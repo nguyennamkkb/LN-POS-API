@@ -90,10 +90,12 @@ export class EmployeeController {
     }
   }
   @Put()
-  async update(@Body() item: any): Promise<ApiResponse<UpdateResult>> {
+  async update(@Body() body: any): Promise<ApiResponse<UpdateResult>> {
     try {
-      if (await Common.verifyRequest(item.cksRequest, item.timeRequest)) {
-        const res = await this.service.update(item);
+      if (await Common.verifyRequest(body.cksRequest, body.timeRequest)) {
+        delete body["cksRequest"];
+        delete body["timeRequest"];
+        const res = await this.service.update(body);
         return ResponseHelper.success(res);
       }
     } catch (error) {

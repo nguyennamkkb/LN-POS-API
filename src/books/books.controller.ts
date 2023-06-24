@@ -17,6 +17,7 @@ import { Common } from "./../../helper/common/common";
 import { EmployeeService } from "src/employee/employee.service";
 import { CustomerService } from "src/customer/customer.service";
 import { UserService } from "src/user/user.service";
+import { log } from "console";
 
 @Controller("books")
 export class BooksController {
@@ -97,20 +98,24 @@ export class BooksController {
     try {
       if (await Common.verifyRequest(body.cksRequest, body.timeRequest)) {
         const book = await this.services.findOne(body.id);
-        if (book.status == 4) {
+        if (book.status == 1 || body.status > 3) {
           return ResponseHelper.error(0, "Lỗi");
         }
+        delete body["cksRequest"];
+        delete body["timeRequest"];
         const updateBook = await this.services.update(body);
-        
-        if (updateBook.affected == 1 && book.status != 4 && body.status == 4) {
+        if (updateBook.affected == 1 && book.status != 1 && body.status == 1) {
           const customer = await this.customerServices.findOne(body.idCustomer);
           customer.loyalty = customer.loyalty + book.amount;
           const updateCustomer = await this.customerServices.update(customer);
 
           if (updateCustomer.affected == 1) {
+
             return ResponseHelper.success(200, "Thành công");
           }
+
         } else if (updateBook.affected == 1) {
+
           return ResponseHelper.success(updateBook);
         }
       }
