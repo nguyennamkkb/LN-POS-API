@@ -110,12 +110,9 @@ export class BooksController {
           const updateCustomer = await this.customerServices.update(customer);
 
           if (updateCustomer.affected == 1) {
-
             return ResponseHelper.success(200, "Thành công");
           }
-
         } else if (updateBook.affected == 1) {
-
           return ResponseHelper.success(updateBook);
         }
       }
