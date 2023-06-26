@@ -31,7 +31,7 @@ export class UserController {
       if (await Common.verifyRequest(item.cksRequest, item.timeRequest)) {
         writeLogToFile(`UserController signup input ${JSON.stringify(item)}`);
         const findUSer = await this.services.findByPhone(item.phone);
-        if (findUSer.length == 0) {
+        if (findUSer) {
           const mk = Common.MD5Hash(Common.keyApp + item.password);
           item.password = mk;
           const res = await this.services.create(item);
@@ -53,7 +53,7 @@ export class UserController {
       if (await Common.verifyRequest(item.cksRequest, item.timeRequest)) {
         writeLogToFile(`UserController checkuser input ${JSON.stringify(item)}` );
         const findUSer = await this.services.findByPhone(item.phone);
-        if (findUSer.length > 0) {
+        if (findUSer) {
           return ResponseHelper.error(0, "Số điện thoại đã tồn tại");
         } else {
           return ResponseHelper.customise(200, "OK");

@@ -30,7 +30,7 @@ export class EmployeeController {
     try {
       if (await Common.verifyRequest(body.cksRequest, body.timeRequest)) {
         const user = await this.userService.findById(body.store_id);
-        if (user.length > 0) {
+        if (user) {
           body.keySearch =
             Common.removeAccents(body.fullName) +
             Common.removeAccents(body.address) +

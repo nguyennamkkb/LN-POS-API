@@ -44,21 +44,22 @@ export class UserService {
     async remove(id: number): Promise<DeleteResult> {
         return await this.repository.delete(id);
     }
-    async findPhonePassword(phone: string, password: string): Promise<UserEntity[]> {
-        return await this.repository.find({
-            where: [{ "phone": phone, "password": password }]
-        });
+    async findPhonePassword(phone: string, password: string): Promise<UserEntity | null> {
+        // return await this.repository.find({
+        //     where: [{ "phone": phone, "password": password }]
+        // });
+
+        const res = await this.repository.findOne({ where: [{ "phone": phone, "password": password }] });
+        return res ? res : null;
     }
-    async findByPhone(phone: string): Promise<UserEntity[]> {
-        return await this.repository.find({
-            where: [{ "phone": phone }]
-        });
+    async findByPhone(phone: string): Promise<UserEntity| null> {
+        const res = await this.repository.findOne({ where: { "phone": phone } });
+        return res ? res : null;
     }
 
-    async findById(store_id: number): Promise<UserEntity[]> {
-        return await this.repository.find({
-            where: [{ "id": store_id }]
-        });
+    async findById(id: number): Promise<UserEntity | null> {
+        const res = await this.repository.findOne({ where: { "id": id } });
+        return res ? res : null;
     }
 
 

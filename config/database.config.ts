@@ -6,8 +6,8 @@ export const databaseConfig = {
     port: 3306,
     username: 'root',
     // password: '',
-    // password: 'root',
-    password: 'pos-api.1A',
+    password: 'root',
+    // password: 'pos-api.1A',
     entities: [__dirname + '/**/*.entity{.ts,.js}'],
     synchronize: true,
 };
