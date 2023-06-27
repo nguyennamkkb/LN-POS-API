@@ -25,16 +25,17 @@ export class ProductService {
         return [res, totalCount];
     }
 
-    async findOne(_id: number): Promise<ProductEntity[]> {
-        return await this.repository.find({
-            where: [{ "id": _id }]
-        });
+    async findOne(id: number): Promise<ProductEntity> {
+        const res = await this.repository.findOne({ where: { "id": id } });
+        return res ? res : null;
     }
+
     async create(item: ProductEntity): Promise<ProductEntity>  {
         item.createAt = Date.now().toString()
         item.updateAt = Date.now().toString()
         return await this.repository.save(item)
     }
+    
     async update(item: ProductEntity): Promise<UpdateResult> {
         item.updateAt = Date.now().toString()
         try {

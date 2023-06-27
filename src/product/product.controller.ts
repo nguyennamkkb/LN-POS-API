@@ -63,7 +63,7 @@ import {
     }
   
     @Get(':id')
-    async findOne(@Param() param, @Query() query): Promise<ApiResponse<ProductEntity[]>> {
+    async findOne(@Param() param, @Query() query): Promise<ApiResponse<ProductEntity>> {
       try {
         if (await Common.verifyRequest(query.cksRequest, query.timeRequest)) {
           const res = await this.services.findOne(param.id);

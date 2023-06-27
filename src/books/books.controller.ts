@@ -98,6 +98,12 @@ export class BooksController {
     try {
       if (await Common.verifyRequest(body.cksRequest, body.timeRequest)) {
         const book = await this.services.findOne(body.id);
+
+        const id_shop = await Common.getIdShop(body.cksRequest)
+
+        if (id_shop != book.id) {
+          return ResponseHelper.error(0, "Lỗi");
+        }
         if (book.status == 1 || body.status > 3) {
           return ResponseHelper.error(0, "Lỗi");
         }

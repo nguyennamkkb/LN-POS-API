@@ -8,6 +8,7 @@ import {
   Delete,
   Query,
   Patch,
+  Headers,
 } from "@nestjs/common";
 import { UserService } from "./user.service";
 import { ResponseHelper } from "helper/common/response.helper";
@@ -18,11 +19,12 @@ import { Public } from "src/auth/public.decorator";
 import { writeLogToFile } from "./../../helper/common/logger";
 import { UserRequest } from "./user.entity/user.request";
 import { UserEntity } from "./entity/user.entity";
+import { JWTUtil } from "src/auth/JWTUtil";
 const fs = require("fs");
 
 @Controller("user")
 export class UserController {
-  constructor(private readonly services: UserService) {}
+  constructor(private readonly services: UserService,    private readonly jwtUtil: JWTUtil,) {}
 
   @Public()
   @Post()
@@ -70,13 +72,16 @@ export class UserController {
   async findAll(
     @Query("page") page: number = 1,
     @Query("limit") limit: number = 10,
-    @Query() params
+    @Query() params,
+    @Headers('Authorization') auth: string
   ): Promise<ApiResponse<UserEntity[]>> {
     try {
       if (await Common.verifyRequest(params.cksRequest, params.timeRequest)) {
         writeLogToFile(
           `UserController findAll input ${JSON.stringify(params)}`
         );
+        const user = await this.jwtUtil.decode(auth);
+     
         const [res, totalCount] = await this.services.findAll(page, limit);
         var response = {
           statusCode: 200,

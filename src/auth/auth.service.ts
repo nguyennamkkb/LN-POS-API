@@ -16,8 +16,8 @@ export class AuthService {
       throw new UnauthorizedException();
     }
     const payload = {
-      sub: Common.MD5Hash(user.id + Common.makeRandomStringWithLength(5)),
-      username: Common.MD5Hash(
+      shop: user.id+Common.makeRandomStringWithLength(5),
+      key: Common.MD5Hash(
         user.phone + Common.makeRandomStringWithLength(5),
       ),
     };

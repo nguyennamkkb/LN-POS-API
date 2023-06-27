@@ -78,11 +78,11 @@ export class Common {
     return `${year}-${month}-${day}`;
   }
 
-  static async verifyRequest(cksRequest: String, timeRequest: number): Promise<boolean> {
+  static async verifyRequest(cksRequest: String, timeRequest: number ): Promise<boolean> {
     try {
       const dataCks = this.getKeyApp() + timeRequest
       const cksApp = this.MD5Hash(dataCks)
-      writeLogToFile(`verifyRequest cksRequest:${cksRequest}, cksApp:${cksApp}, keyapp:${this.getKeyApp()}, timeRequest:${timeRequest}`)
+      writeLogToFile(`verifyRequest cksRequest:${cksRequest.substring(0,32)}, cksApp:${cksApp}, keyapp:${this.getKeyApp()}, timeRequest:${timeRequest}`)
       // if (cksApp == cksRequest) {
       //   return true
       // } else {
@@ -94,4 +94,9 @@ export class Common {
       return  false
     }
   }
+  
+  static async getIdShop(s: string): Promise<Number> {
+    return Number(s.substring(32,s.length))
+  }
+
 }
