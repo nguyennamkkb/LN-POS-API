@@ -61,9 +61,7 @@ export class EmployeeController {
     @Headers('Authorization') auth: string
   ): Promise<ApiResponse<EmployeeEntity[]>> {
     try {
-      
-      const json = await this.jwtUtil.decode(auth);
-      console.log(json.shop)
+
       if (await Common.verifyRequest(query.cksRequest, query.timeRequest)) {
         const [res, totalCount] = await this.service.findAll(
           page,
@@ -105,8 +103,7 @@ export class EmployeeController {
     try {
       if (await Common.verifyRequest(body.cksRequest, body.timeRequest)) {
         const employee = await this.service.findOne(body.id)
-        const store_id = await Common.getIdShop(body.cksRequest)
-        if (!employee && store_id != employee.store_id) {
+        if (employee == null) {
           return ResponseHelper.error(0, "Lỗi");
         }
         delete body["cksRequest"];
@@ -124,10 +121,6 @@ export class EmployeeController {
     try {
       if (await Common.verifyRequest(query.cksRequest, query.timeRequest)) {
         const employee = await this.service.findOne(param.id)
-        const store_id = await Common.getIdShop(query.cksRequest)
-        if (store_id != employee.store_id) {
-          return ResponseHelper.error(0, "Lỗi");
-        }
         const res = await this.service.remove(param.id);
         return ResponseHelper.success(res);
       }

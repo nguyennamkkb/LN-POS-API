@@ -83,12 +83,12 @@ export class Common {
       const dataCks = this.getKeyApp() + timeRequest
       const cksApp = this.MD5Hash(dataCks)
       writeLogToFile(`verifyRequest cksRequest:${cksRequest.substring(0,32)}, cksApp:${cksApp}, keyapp:${this.getKeyApp()}, timeRequest:${timeRequest}`)
-      // if (cksApp == cksRequest) {
-      //   return true
-      // } else {
-      //   return false
-      // }
-      return true
+      if (cksApp == cksRequest) {
+        return true
+      } else {
+        return false
+      }
+      // return true
     } catch (error) {
       writeLogToFile(`verifyRequest catch ${error}`)
       return  false
@@ -96,6 +96,7 @@ export class Common {
   }
   
   static async getIdShop(s: string): Promise<Number> {
+    // id phia sau ma cks
     return Number(s.substring(32,s.length))
   }
 

@@ -24,7 +24,7 @@ const fs = require("fs");
 
 @Controller("user")
 export class UserController {
-  constructor(private readonly services: UserService,    private readonly jwtUtil: JWTUtil,) {}
+  constructor(private readonly services: UserService,    private readonly jwtUtil: JWTUtil) {}
 
   @Public()
   @Post()
@@ -33,7 +33,7 @@ export class UserController {
       if (await Common.verifyRequest(item.cksRequest, item.timeRequest)) {
         writeLogToFile(`UserController signup input ${JSON.stringify(item)}`);
         const findUSer = await this.services.findByPhone(item.phone);
-        if (findUSer) {
+        if (findUSer == null) {
           const mk = Common.MD5Hash(Common.keyApp + item.password);
           item.password = mk;
           const res = await this.services.create(item);
@@ -80,8 +80,7 @@ export class UserController {
         writeLogToFile(
           `UserController findAll input ${JSON.stringify(params)}`
         );
-        const user = await this.jwtUtil.decode(auth);
-     
+
         const [res, totalCount] = await this.services.findAll(page, limit);
         var response = {
           statusCode: 200,
@@ -120,7 +119,7 @@ export class UserController {
   }
 
   @Put()
-  async update(@Body() body): Promise<ApiResponse<UpdateResult>> {
+  async update(@Body() body, @Headers('Authorization') auth: string ): Promise<ApiResponse<UpdateResult>> {
     try {
       writeLogToFile(`UserController update input ${JSON.stringify(body)}`);
       if (await Common.verifyRequest(body.cksRequest, body.timeRequest)) {
@@ -138,6 +137,10 @@ export class UserController {
   async remove(@Param() param, @Query() query) {
     try {
       if (await Common.verifyRequest(query.cksRequest, query.timeRequest)) {
+        // const store_id = await Common.getIdShop(query.cksRequest)
+        // if ( store_id != query.id) {
+        //   return ResponseHelper.error(0, "Lỗi");
+        // }
         const res = await this.services.remove(param.id);
         return ResponseHelper.success(res);
       }

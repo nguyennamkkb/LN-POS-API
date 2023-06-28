@@ -22,6 +22,7 @@ import {
     @Post()
     async create(@Body() item): Promise<ApiResponse<ProductEntity>> {
       try {
+        
         if (await Common.verifyRequest(item.cksRequest, item.timeRequest)) {
           const res = await this.services.create(item);
           return ResponseHelper.success(res);
