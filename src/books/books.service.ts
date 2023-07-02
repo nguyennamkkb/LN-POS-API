@@ -1,6 +1,6 @@
 import { Injectable, Inject } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Long, Repository, Like, LessThan, MoreThan } from 'typeorm';
+import { Long, Repository, Like, LessThan, MoreThan, Between } from 'typeorm';
 import { UpdateResult, DeleteResult } from  'typeorm';
 import { BooksEntity } from './entity/books.entity';
 import {Common} from './../../helper/common/common'
@@ -15,8 +15,7 @@ export class BooksService {
         if (param.store_id) {where['store_id'] = param.store_id} 
         if (param.idCustomer) {where['idCustomer'] = param.idCustomer} 
         if (param.idEmployee) {where['idEmployee'] = param.idEmployee} 
-        if (param.from) {where['start'] = MoreThan(param.from)} 
-        if (param.to) {where['start'] = LessThan(param.to)} 
+        if (param.from && param.to) {where['start'] = Between[param.from, param.to]} 
         if (param.status) {where['status'] = param.status} 
         const skip = (page - 1) * limit;
         const [res, totalCount] = await this.repository.findAndCount({

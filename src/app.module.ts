@@ -10,6 +10,7 @@ import { EmployeeModule } from './employee/employee.module';
 import { BooksModule } from './books/books.module';
 import { ProductModule } from './product/product.module';
 import { ImagesController } from './image/images.controller';
+import { TestController } from './test/test.controller';
 
 @Module({
   imports: [
@@ -32,6 +33,6 @@ import { ImagesController } from './image/images.controller';
     BooksModule,
     ProductModule,
   ],
-  controllers: [ImagesController]
+  controllers: [ImagesController, TestController]
 })
 export class AppModule { }
