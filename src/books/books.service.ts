@@ -15,8 +15,10 @@ export class BooksService {
         if (param.store_id) {where['store_id'] = param.store_id} 
         if (param.idCustomer) {where['idCustomer'] = param.idCustomer} 
         if (param.idEmployee) {where['idEmployee'] = param.idEmployee} 
-        if (param.from && param.to) {where['start'] = Between[param.from, param.to]} 
+        if (param.from && param.to) {where['start'] = Between(Number(param.from), Number(param.to))} 
         if (param.status) {where['status'] = param.status} 
+
+        // console.log(where)
         const skip = (page - 1) * limit;
         const [res, totalCount] = await this.repository.findAndCount({
             where: where,
