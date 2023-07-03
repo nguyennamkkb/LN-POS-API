@@ -54,7 +54,7 @@ export class EmployeeController {
     }
   }
 
-  @Public()
+  // @Public()
   @Get()
   async findAll(
     @Query("page") page: number = 1,
@@ -64,7 +64,7 @@ export class EmployeeController {
   ): Promise<ApiResponse<EmployeeEntity[]>> {
     try {
 
-      // if (await Common.verifyRequest(query.cksRequest, query.timeRequest)) {
+      if (await Common.verifyRequest(query.cksRequest, query.timeRequest)) {
         const [res, totalCount] = await this.service.findAll(
           page,
           limit,
@@ -80,7 +80,7 @@ export class EmployeeController {
             totalPages: Math.ceil(totalCount / limit),
           },
         };
-      // }
+      }
     } catch (error) {
       return ResponseHelper.error(0, error);
     }
