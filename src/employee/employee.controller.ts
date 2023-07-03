@@ -19,6 +19,7 @@ import { UserEntity } from "src/user/entity/user.entity";
 import { UserService } from "src/user/user.service";
 import { DeleteResult } from "typeorm";
 import { JWTUtil } from "src/auth/JWTUtil";
+import { Public } from "src/auth/public.decorator";
 
 @Controller("employee")
 export class EmployeeController {
@@ -53,6 +54,7 @@ export class EmployeeController {
     }
   }
 
+  @Public()
   @Get()
   async findAll(
     @Query("page") page: number = 1,
@@ -62,7 +64,7 @@ export class EmployeeController {
   ): Promise<ApiResponse<EmployeeEntity[]>> {
     try {
 
-      if (await Common.verifyRequest(query.cksRequest, query.timeRequest)) {
+      // if (await Common.verifyRequest(query.cksRequest, query.timeRequest)) {
         const [res, totalCount] = await this.service.findAll(
           page,
           limit,
@@ -78,7 +80,7 @@ export class EmployeeController {
             totalPages: Math.ceil(totalCount / limit),
           },
         };
-      }
+      // }
     } catch (error) {
       return ResponseHelper.error(0, error);
     }
