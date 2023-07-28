@@ -27,9 +27,29 @@ export class BooksService {
             relations:{
                 employee: true,
                 customer: true
+            },
+            order: {
+                start: "ASC"
             }
+            
         });
         return [res, totalCount];
+    }
+    async getAllBooks(param: any): Promise<BooksEntity[]> {
+        let where = {}
+        if (param.store_id) {where['store_id'] = param.store_id} 
+        if (param.from && param.to) {where['start'] = Between(Number(param.from), Number(param.to))} 
+        if (param.status) {where['status'] = param.status} 
+
+        // console.log(where)
+        const res = await this.repository.find({
+            where: where,
+            order: {
+                start: "ASC"
+            }
+            
+        });
+        return res;
     }
 
     async findOne(id: number): Promise<BooksEntity> {
