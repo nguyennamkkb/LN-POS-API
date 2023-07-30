@@ -37,7 +37,7 @@ export class UserService {
             item.updateAt = Date.now()
         return await this.repository.update(item.id, item)
         } catch (error) {
-            console.log(error)
+            // console.log(error)
         }
     }
 

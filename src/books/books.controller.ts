@@ -115,7 +115,7 @@ export class BooksController {
         chartDay.push(chartDayData)
       }
       const totalAmountByDay = await Common.calculateTotalAmountByDay(chartDay);
-      console.log(totalAmountByDay);
+      // console.log(totalAmountByDay);
 
 
 
@@ -145,7 +145,7 @@ export class BooksController {
         totalBook: totalBook,
         listEmplEach: listRP
       }
-      console.log("listBook: " + JSON.stringify(listRP))
+      // console.log("listBook: " + JSON.stringify(listRP))
       return {
         statusCode: 200,
         message: "Thành công!",
