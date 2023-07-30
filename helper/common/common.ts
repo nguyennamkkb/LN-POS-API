@@ -82,16 +82,73 @@ export class Common {
     try {
       const dataCks = this.getKeyApp() + timeRequest
       const cksApp = this.MD5Hash(dataCks)
-      writeLogToFile(`verifyRequest cksRequest:${cksRequest}, cksApp:${cksApp}, keyapp:${this.getKeyApp()}, timeRequest:${timeRequest}`)
-      // if (cksApp == cksRequest) {
-      //   return true
-      // } else {
-      //   return false
-      // }
-      return true
+      writeLogToFile(`verifyRequest cksRequest:${cksRequest.substring(0, 32)}, cksApp:${cksApp}, keyapp:${this.getKeyApp()}, timeRequest:${timeRequest}`)
+      if (cksApp == cksRequest) {
+        return true
+      } else {
+        return false
+      }
+      // return true
     } catch (error) {
       writeLogToFile(`verifyRequest catch ${error}`)
-      return  false
+      return false
     }
   }
+
+  static async getIdShop(s: string): Promise<Number> {
+    // id phia sau ma cks
+    return Number(s.substring(32, s.length))
+  }
+
+  static async formatDateFromMilliseconds(milliseconds: string): Promise<string> {
+    try {
+      const date = new Date(Number(milliseconds));
+      const day = String(date.getDate()).padStart(2, '0');
+      const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are zero-based, so we add 1
+      const year = date.getFullYear();
+      return `${day}/${month}/${year}`;
+    } catch (error) {
+      return ""
+    }
+
+  }
+  static async calculateTotalAmountByDay(data): Promise<any> {
+    // const result = {};
+
+    // data.forEach(entry => {
+    //   const { date, money } = entry;
+    //   if (!result[date]) {
+    //     result[date] = 0;
+    //   }
+    //   result[date] += money;
+    // });
+
+    // const totalAmountByDay = Object.keys(result).map(date => {
+    //   return { date, money: result[date] };
+    // });
+
+    // return totalAmountByDay;
+    const result = {};
+
+    data.forEach(entry => {
+      const { date, money } = entry;
+      if (!result[date]) {
+        result[date] = {
+          totalMoney: 0,
+          recordsCount: 0
+        };
+      }
+      result[date].totalMoney += money;
+      result[date].recordsCount++;
+    });
+
+    const totalAmountByDay = Object.keys(result).map(date => {
+      const { totalMoney, recordsCount } = result[date];
+      return { date, money: totalMoney, recordsCount };
+    });
+
+    return totalAmountByDay;
+  }
+
+
 }

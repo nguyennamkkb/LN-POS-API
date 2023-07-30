@@ -30,6 +30,16 @@ export class EmployeeService {
         return [res, totalCount];
     }
 
+    async getAllEmployee( store_id: number): Promise<EmployeeEntity[]> {
+        var where = {keySearch: Like('%%')}
+        where['status'] = 1 
+        where['store_id'] = store_id
+        const res = await this.repository.find({
+            where:where
+        });
+        return res;
+    }
+
     async findOne(id: number): Promise<EmployeeEntity> {
         const res = await this.repository.findOne({ where: { "id": id } });
         return res ? res : null;
@@ -47,7 +57,10 @@ export class EmployeeService {
     async remove(id: number): Promise<DeleteResult> {
         return await this.repository.delete(id);
     }
-
+    async findByPhone(phone: string): Promise<EmployeeEntity| null> {
+        const res = await this.repository.findOne({ where: { "phone": phone } });
+        return res ? res : null;
+    }
     
 
 }

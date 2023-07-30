@@ -47,6 +47,10 @@ export class CustomerService {
     async remove(id: number): Promise<DeleteResult> {
         return await this.repository.delete(id);
     }
+    async findByPhone(phone: string): Promise<CustomerEntity| null> {
+        const res = await this.repository.findOne({ where: { "phone": phone } });
+        return res ? res : null;
+    }
 
     
 

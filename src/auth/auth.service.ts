@@ -15,10 +15,11 @@ export class AuthService {
     if (!user) {
       throw new UnauthorizedException();
     }
+    const shop =  user.id+Common.makeRandomStringWithLength(5)
     const payload = {
-      sub: Common.MD5Hash(user.id + Common.makeRandomStringWithLength(5)),
-      username: Common.MD5Hash(
-        user.phone + Common.makeRandomStringWithLength(5),
+      shop: shop,
+      key: Common.MD5Hash(
+        user.phone + Common.makeRandomStringWithLength(5) + shop,
       ),
     };
     user['access_token'] = await this.jwtService.signAsync(payload)

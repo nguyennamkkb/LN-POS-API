@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
   Query,
+  Headers,
 } from "@nestjs/common";
 import { EmployeeService } from "./employee.service";
 import { EmployeeEntity } from "./entity/employee.entity";
@@ -17,20 +18,27 @@ import { Common } from "./../../helper/common/common";
 import { UserEntity } from "src/user/entity/user.entity";
 import { UserService } from "src/user/user.service";
 import { DeleteResult } from "typeorm";
+import { JWTUtil } from "src/auth/JWTUtil";
+import { Public } from "src/auth/public.decorator";
 
 @Controller("employee")
 export class EmployeeController {
   constructor(
     private readonly service: EmployeeService,
-    private readonly userService: UserService
+    private readonly userService: UserService,
+    private readonly jwtUtil: JWTUtil,
   ) {}
 
   @Post()
   async create(@Body() body): Promise<ApiResponse<EmployeeEntity>> {
     try {
       if (await Common.verifyRequest(body.cksRequest, body.timeRequest)) {
+        const employee = await this.service.findByPhone(body.phone);
+        if (employee) {
+          return ResponseHelper.error(0, "Số điện thoại đã được sử dụng");
+        }
         const user = await this.userService.findById(body.store_id);
-        if (user.length > 0) {
+        if (user) {
           body.keySearch =
             Common.removeAccents(body.fullName) +
             Common.removeAccents(body.address) +
@@ -46,13 +54,16 @@ export class EmployeeController {
     }
   }
 
+  // @Public()
   @Get()
   async findAll(
     @Query("page") page: number = 1,
     @Query("limit") limit: number = 10,
-    @Query() query
+    @Query() query,
+    @Headers('Authorization') auth: string
   ): Promise<ApiResponse<EmployeeEntity[]>> {
     try {
+
       if (await Common.verifyRequest(query.cksRequest, query.timeRequest)) {
         const [res, totalCount] = await this.service.findAll(
           page,
@@ -93,6 +104,10 @@ export class EmployeeController {
   async update(@Body() body: any): Promise<ApiResponse<UpdateResult>> {
     try {
       if (await Common.verifyRequest(body.cksRequest, body.timeRequest)) {
+        const employee = await this.service.findOne(body.id)
+        if (employee == null) {
+          return ResponseHelper.error(0, "Lỗi");
+        }
         delete body["cksRequest"];
         delete body["timeRequest"];
         const res = await this.service.update(body);
@@ -107,6 +122,7 @@ export class EmployeeController {
   async remove(@Param() param, @Query() query) {
     try {
       if (await Common.verifyRequest(query.cksRequest, query.timeRequest)) {
+        const employee = await this.service.findOne(param.id)
         const res = await this.service.remove(param.id);
         return ResponseHelper.success(res);
       }
@@ -114,6 +130,4 @@ export class EmployeeController {
       return ResponseHelper.error(0, error);
     }
   }
-
-
 }
