@@ -176,7 +176,7 @@ export class BooksController {
     try {
       if (await Common.verifyRequest(body.cksRequest, body.timeRequest)) {
         const book = await this.services.findOne(body.id);
-        if (book.status == 1 || body.status > 3) {
+        if (body.status > 3) {
           return ResponseHelper.error(0, "Lỗi1");
         }
         delete body["cksRequest"];
