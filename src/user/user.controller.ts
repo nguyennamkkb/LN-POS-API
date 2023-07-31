@@ -71,7 +71,7 @@ export class UserController {
   @Get()
   async findAll(
     @Query("page") page: number = 1,
-    @Query("limit") limit: number = 10,
+    @Query("limit") limit: number = 100,
     @Query() params,
     @Headers('Authorization') auth: string
   ): Promise<ApiResponse<UserEntity[]>> {

@@ -54,7 +54,7 @@ export class BooksController {
   @Get()
   async findAll(
     @Query("page") page: number = 1,
-    @Query("limit") limit: number = 20,
+    @Query("limit") limit: number = 100,
     @Query() query
   ): Promise<ApiResponse<BooksEntity[]>> {
     try {
@@ -80,34 +80,24 @@ export class BooksController {
     }
   }
 
-  @Public()
-  @Get('RpEachEmployee')
-  async RpEachEmployee(
+  // @Public()
+  @Get('report')
+  async Report(
     @Query() query
   ): Promise<ApiResponse<BooksEntity[]>> {
     try {
       const listEmployee = await this.employeeServices.getAllEmployee(query.store_id);
       const listBook = await this.services.getAllBooks(query);
-      if (listBook.length <= 0) {
+      if (listBook.length <= 0 || listEmployee.length <= 0) {
         return ResponseHelper.error(0, "không có dữ liệu");
       }
-      // console.log("listEmployee: " + JSON.stringify(listEmployee))
-      // console.log("listBook: " + JSON.stringify(listBook))
-
-
       var res: any
       var listRP: any = []
-      var totalBook = {
-        money: 0,
-        book: listBook.length
-      }
-
-      // tinh bieu do theo ngay
-
-
-
+      var totalBook : RpTotal
       var chartDay = []
-      for (let i = 0; i < listBook.length; i++) {// lap danh sach book
+
+
+      for (let i = 0; i < listBook.length; i++) {// lap danh sach bieu do
         const chartDayData = {
           date: await Common.formatDateFromMilliseconds(listBook[i].start),
           money: listBook[i].amount
@@ -120,7 +110,7 @@ export class BooksController {
 
 
       // ket thuc
-      // tinh tong tien va so lan dat cho cua trong thoi gian va nhan vien
+      // tinh tong tien va so lan dat cho trong thoi gian va nhan vien
       listEmployee.forEach(e => {// lap danh sach nhan vien
         var totalMoneyEmpl = 0
         var tolalBookEmpl = 0

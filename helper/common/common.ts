@@ -112,25 +112,10 @@ export class Common {
     }
 
   }
-  static async calculateTotalAmountByDay(data): Promise<any> {
-    // const result = {};
-
-    // data.forEach(entry => {
-    //   const { date, money } = entry;
-    //   if (!result[date]) {
-    //     result[date] = 0;
-    //   }
-    //   result[date] += money;
-    // });
-
-    // const totalAmountByDay = Object.keys(result).map(date => {
-    //   return { date, money: result[date] };
-    // });
-
-    // return totalAmountByDay;
+  static async calculateTotalAmountByDay(data: any[]): Promise<any> {
     const result = {};
 
-    data.forEach(entry => {
+    data.forEach((entry: { date: any; money: any; }) => {
       const { date, money } = entry;
       if (!result[date]) {
         result[date] = {

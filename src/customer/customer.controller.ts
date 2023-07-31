@@ -52,7 +52,7 @@ export class CustomerController {
   @Get()
   async findAll(
     @Query("page") page: number = 1,
-    @Query("limit") limit: number = 10,
+    @Query("limit") limit: number = 100,
     @Query() query
   ): Promise<ApiResponse<CustomerEntity[]>> {
     try {
