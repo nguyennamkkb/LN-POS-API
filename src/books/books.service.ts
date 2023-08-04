@@ -1,6 +1,6 @@
 import { Injectable, Inject } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Long, Repository, Like, LessThan, MoreThan, Between } from 'typeorm';
+import { Long, Repository, Like, LessThan, MoreThan, Between, In } from 'typeorm';
 import { UpdateResult, DeleteResult } from  'typeorm';
 import { BooksEntity } from './entity/books.entity';
 import {Common} from './../../helper/common/common'
@@ -28,6 +28,28 @@ export class BooksService {
                 employee: true,
                 customer: true
             },
+            order: {
+                start: "ASC"
+            }
+            
+        });
+        return [res, totalCount];
+    }
+    async getAllBookInSuccess(page: number, limit: number, param: any): Promise<[BooksEntity[],number]> {
+        let where = {}
+        if (param.store_id) {where['store_id'] = param.store_id} 
+        where['status'] = In([0,2,3,4])
+
+        // console.log(where)
+        const skip = (page - 1) * limit;
+        const [res, totalCount] = await this.repository.findAndCount({
+            where: where,
+            skip,
+            take: limit,
+            // relations:{
+            //     employee: true,
+            //     customer: true
+            // },
             order: {
                 start: "ASC"
             }

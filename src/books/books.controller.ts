@@ -80,6 +80,35 @@ export class BooksController {
     }
   }
 
+  @Get("bookinsuccess")
+  async getAllBookInSuccess(
+    @Query("page") page: number = 1,
+    @Query("limit") limit: number = 100,
+    @Query() query
+  ): Promise<ApiResponse<BooksEntity[]>> {
+    try {
+      if (await Common.verifyRequest(query.cksRequest, query.timeRequest)) {
+        const [res, totalCount] = await this.services.getAllBookInSuccess(
+          page,
+          limit,
+          query
+        );
+        return {
+          statusCode: 200,
+          message: "Thành công!",
+          data: res,
+          meta: {
+            totalCount,
+            currentPage: page,
+            totalPages: Math.ceil(totalCount / limit),
+          },
+        };
+      }
+    } catch (error) {
+      return ResponseHelper.error(0, error);
+    }
+  }
+
   // @Public()
   @Get('report')
   async Report(
