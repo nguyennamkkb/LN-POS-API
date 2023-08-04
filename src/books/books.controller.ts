@@ -115,15 +115,21 @@ export class BooksController {
     @Query() query
   ): Promise<ApiResponse<BooksEntity[]>> {
     try {
+      
       const listEmployee = await this.employeeServices.getAllEmployee(query.store_id);
       const listBook = await this.services.getAllBooks(query);
+      // log("listBook"+listBook.length)
+      // log("listEmployee"+ listEmployee.length)
       if (listBook.length <= 0 || listEmployee.length <= 0) {
         return ResponseHelper.error(0, "không có dữ liệu");
       }
       var res: any
       var listRP: any = []
-      var totalBook : RpTotal
       var chartDay = []
+      var totalBook = {
+        money: 0,
+        book: listBook.length
+      }
 
 
       for (let i = 0; i < listBook.length; i++) {// lap danh sach bieu do
@@ -135,7 +141,7 @@ export class BooksController {
       }
       const totalAmountByDay = await Common.calculateTotalAmountByDay(chartDay);
       // console.log(totalAmountByDay);
-
+      // log("totalAmountByDay"+totalAmountByDay.length)
 
 
       // ket thuc
@@ -158,7 +164,10 @@ export class BooksController {
         })
         totalBook.money += totalMoneyEmpl
       });
-      //ket thuc
+      // //ket thuc
+      // log("wqweqwe")
+      // log("totalBook"+totalBook)
+      // log("listEmplEach"+listRP.length)
       res = {
         chartDay: totalAmountByDay,
         totalBook: totalBook,

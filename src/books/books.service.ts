@@ -46,10 +46,10 @@ export class BooksService {
             where: where,
             skip,
             take: limit,
-            // relations:{
-            //     employee: true,
-            //     customer: true
-            // },
+            relations:{
+                employee: true,
+                customer: true
+            },
             order: {
                 start: "ASC"
             }
