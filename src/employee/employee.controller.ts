@@ -108,6 +108,10 @@ export class EmployeeController {
         if (employee == null) {
           return ResponseHelper.error(0, "Lỗi");
         }
+        body.keySearch =
+        Common.removeAccents(body.fullName) +
+        Common.removeAccents(body.address) +
+        body.phone;
         delete body["cksRequest"];
         delete body["timeRequest"];
         const res = await this.service.update(body);

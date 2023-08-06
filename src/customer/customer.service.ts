@@ -30,7 +30,7 @@ export class CustomerService {
         return [res, totalCount];
     }
 
-    async findOne(id: number): Promise<CustomerEntity> {
+    async findOne(id: number): Promise<CustomerEntity | null> {
         const res = await this.repository.findOne({ where: { "id": id } });
         return res ? res : null;
     }

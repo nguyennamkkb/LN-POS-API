@@ -40,7 +40,7 @@ export class EmployeeService {
         return res;
     }
 
-    async findOne(id: number): Promise<EmployeeEntity> {
+    async findOne(id: number): Promise<EmployeeEntity | null> {
         const res = await this.repository.findOne({ where: { "id": id } });
         return res ? res : null;
     }

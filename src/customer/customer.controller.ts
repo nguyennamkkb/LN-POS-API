@@ -28,12 +28,12 @@ export class CustomerController {
   async create(@Body() body): Promise<ApiResponse<CustomerEntity>> {
     try {
       if (await Common.verifyRequest(body.cksRequest, body.timeRequest)) {
-        const user = await this.userService.findById(body.store_id);
+        const store = await this.userService.findById(body.store_id);
         const customer = await this.services.findByPhone(body.phone);
         if (customer) {
           return ResponseHelper.error(0, "Số điện thoại đã được sử dụng");
         }
-        if (user) {
+        if (store) {
           body.keySearch =
             Common.removeAccents(body.fullName) +
             Common.removeAccents(body.address) +
@@ -96,6 +96,15 @@ export class CustomerController {
   async update(@Body() body): Promise<ApiResponse<UpdateResult>> {
     try {
       if (await Common.verifyRequest(body.cksRequest, body.timeRequest)) {
+        const customer = await this.services.findOne(body.id)
+        if (customer == null) {
+          return ResponseHelper.error(0, "Lỗi");
+        }
+
+        body.keySearch =
+        Common.removeAccents(body.fullName) +
+        Common.removeAccents(body.address) +
+        body.phone;
         delete body["cksRequest"];
         delete body["timeRequest"];
         const res = await this.services.update(body);
