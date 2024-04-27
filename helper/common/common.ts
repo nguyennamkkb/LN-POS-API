@@ -80,9 +80,9 @@ export class Common {
 
   static async verifyRequest(cksRequest: String, timeRequest: number): Promise<boolean> {
     try {
-      const dataCks = this.getKeyApp() + timeRequest
-      const cksApp = this.MD5Hash(dataCks)
-      writeLogToFile(`verifyRequest cksRequest:${cksRequest.substring(0, 32)}, cksApp:${cksApp}, keyapp:${this.getKeyApp()}, timeRequest:${timeRequest}`)
+      const dataCks = process.env.KEY_APP + timeRequest
+      const cksApp =  this.MD5Hash(dataCks);
+      // writeLogToFile(`verifyRequest cksRequest:${cksRequest.substring(0, 32)}, cksApp:${cksApp}, keyapp:${this.getKeyApp()}, timeRequest:${timeRequest}`)
       if (cksApp == cksRequest) {
         return true
       } else {
@@ -134,6 +134,25 @@ export class Common {
 
     return totalAmountByDay;
   }
+  static async generateRandomNumberString(length: number): Promise<string> {
+    let result = "";
+    const characters = "0123456789";
 
+    for (let i = 0; i < length; i++) {
+      const randomIndex = Math.floor(Math.random() * characters.length);
+      result += characters.charAt(randomIndex);
+    }
 
+    return result;
+  }
+  static async getHour(milliseconds: string) {
+    try {
+      const date = new Date(Number(milliseconds));
+      const hour = String(date.getHours()).padStart(2, "0");
+      return hour;
+    } catch (error) {
+      return "";
+    }
+  }
 }
+

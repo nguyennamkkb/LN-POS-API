@@ -24,11 +24,6 @@ export class EmployeeEntity {
   @Column({ nullable: true })
   address: string;
 
-  @Column({ type: 'varchar', width: 150, nullable: true })
-  bankCode: string;
-
-  @Column({ type: 'varchar', width: 150, nullable: true })
-  accountNumber: string;
 
   @Column({ type: 'text', nullable: true })
   image: string;
@@ -38,6 +33,9 @@ export class EmployeeEntity {
 
   @Column()
   keySearch: string;
+
+  @Column({ type: 'int',default: 0 })
+  luotKhach: number;
 
   @Column({ default: 1 })
   status: number;

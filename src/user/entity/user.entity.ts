@@ -22,16 +22,19 @@ export class UserEntity {
   @Column({length: 30,nullable: true, default:""})
   accountNumber: string;
 
-  @Column({nullable: true})
+  @Column({ nullable: false, unique: true, length: 100, type: "varchar" })
   email: string;
 
   @Column()
   password: string;
 
-  @Column({ default: 1 })
+  @Column({ default: 0 })
   status: number;
 
-  @Column({type: 'bigint'})
+  @Column({ default: 0, type: "tinyint" })
+  role: number;
+
+  @Column({type: 'bigint', default: 0})
   createAt: number;
   
 

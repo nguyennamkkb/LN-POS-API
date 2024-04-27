@@ -9,10 +9,15 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserEntity } from 'src/user/entity/user.entity';
 import { APP_GUARD } from '@nestjs/core';
 import { AuthGuard } from './auth.guard';
+import { EmailEntity } from 'src/email/entity/email.entity';
+import { EmailModule } from 'src/email/email.module';
+import { EmailService } from 'src/email/email.service';
+
+
 @Module({
   imports: [
     UserModule,
-    TypeOrmModule.forFeature([UserEntity]),
+    TypeOrmModule.forFeature([UserEntity,EmailEntity]),
     JwtModule.register({
       global: true,
       secret: jwtConstants.secret,
@@ -27,6 +32,7 @@ import { AuthGuard } from './auth.guard';
       provide: APP_GUARD,
       useClass: AuthGuard,
     },
+    EmailService
   ],
 })
 export class AuthModule {}

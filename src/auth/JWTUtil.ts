@@ -1,19 +1,24 @@
-
 import { JwtService } from "@nestjs/jwt";
+import e from "express";
+
 export class JWTUtil {
-    
-    constructor(private readonly jwtService: JwtService) {}
-    decode(auth: string): Access{
-        const jwt = auth.replace('Bearer ', '');
+  constructor(private jwtService: JwtService) {}
+
+  async decode(auth: string): Promise<Access> {
+    try {
+        const jwt = auth.replace("Bearer ", "");
+        // console.log(jwt)
         return this.jwtService.decode(jwt, { json: true }) as Access;
+    } catch (error) {
+        // console.log(error)
     }
-    getIdShop(s: string): number{
-        return Number(s.substring(32,s.length))
-      }
+   
+  }
 }
 class Access {
-    shop: string
-    key: string
-    iat: number
-    exp: number
+  role:string;
+  id: string;
+  email: string;
+  time: string;
+  key: string;
 }

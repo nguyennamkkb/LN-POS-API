@@ -1,3 +1,5 @@
+require("dotenv").config();
+
 export const jwtConstants = {
-    secret: 'ntt908QTqppr913jcRcm',
+    secret: process.env.JWT_SECRET,
   };

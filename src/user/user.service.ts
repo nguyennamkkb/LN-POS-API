@@ -61,6 +61,17 @@ export class UserService {
         const res = await this.repository.findOne({ where: { "id": id } });
         return res ? res : null;
     }
-
-
+    async findByEmail(email: string): Promise<UserEntity | null> {
+        const res = await this.repository.findOne({ where: { email: email } });
+        return res ? res : null;
+      }
+      async findOneByEmailPassword(
+        email: string,
+        password: string
+      ): Promise<UserEntity | null> {
+        const res = await this.repository.findOne({
+          where: { email: email, password: password },
+        });
+        return res ? res : null;
+      }
 }
