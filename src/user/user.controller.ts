@@ -158,6 +158,13 @@ export class UserController {
       if (await Common.verifyRequest(body.cksRequest, body.timeRequest)) {
         delete body["cksRequest"];
         delete body["timeRequest"];
+        console.log("update"+ JSON.stringify(body));
+        delete body["access_token"];
+        delete body["password"];
+        delete body["email"];
+        // delete body["password"];
+
+
         const res = await this.services.update(body);
         return ResponseHelper.success(res);
       }
@@ -217,6 +224,62 @@ export class UserController {
       }
       return ResponseHelper.error(0, "Loi 2");
     } catch (error) {
+      return ResponseHelper.error(0, error);
+    }
+  }
+  @Public()
+  @Post('sendOtpFogotPassword')
+  async sendOtpFogotPassword(@Body() item): Promise<ApiResponse<any>> {
+    try {
+  
+      const user = await this.services.findByEmail(item.email)
+      if (user == null) {
+        return ResponseHelper.error(0, "Tài khoản không tồn tại");
+      }
+
+      const emailotp = await this.emailSservice.createOtp(user.id)
+
+      // if (emailotp.length != 6) return ResponseHelper.error(2, "Quá số lần gửi, vui lòng chờ 5 phút!");
+      //console.log("emailotp:"+emailotp)
+      this.emailSservice.sendEmail(user.email, "Mã xác nhận: " + emailotp + " - QSalon", "Mã xác nhận của bạn là: " + emailotp + " \nThời hạn sử dụng mã trong vòng 5 phút \nCảm ơn đã sử dụng ứng dụng \nXin liên hệ cho nhà phát triển theo email/skype: nguyennam.kkb@gmail.com")
+
+      return ResponseHelper.error(199, "Đã gửi OTP vào email đăng ký");
+
+    }
+    catch (error) {
+      return ResponseHelper.error(0, error);
+    }
+  }
+
+  @Public()
+  @Post('verifyChangePassword')
+  async verifyChangePassword(@Body() item): Promise<ApiResponse<any>> {
+    try {
+
+      const user = await this.services.findByEmail(item.email)
+
+      const otp = await this.emailSservice.getOtpById(user.id)
+
+      if (!otp) return ResponseHelper.error(0, "Chưa có OTP");
+      
+      const timeNow = Date.now()
+      const hieu2ThoiGian = timeNow - otp.updateAt
+      // //console.log(hieu2ThoiGian);
+      // //console.log(otp.otp);
+      // //console.log(item.otp);
+
+      if (hieu2ThoiGian <= 300000) {
+        if (otp.otp == item.otp) {
+          user.updateAt = timeNow
+          user.status = 1
+          user.password  = Common.MD5Hash(process.env.KEY_APP + item.password);
+          await this.services.update(user)
+          return ResponseHelper.success("Đổi mật khẩu thành công");
+        }
+      }
+      return ResponseHelper.error(0, "OTP không đúng");
+    }
+    catch (error) {
       return ResponseHelper.error(0, error);
     }
   }

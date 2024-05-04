@@ -12,9 +12,10 @@ export class AuthService {
 
   async signIn(email: string, pass: string): Promise<any> {
 
-    
+    // console.log("email " +email )
+    // console.log("pass " +pass )
     const user = await this.usersService.findOneByEmailPassword(email, pass);
-   
+    // console.log("user "+user)
     
     if (!user) {
       throw new UnauthorizedException();
