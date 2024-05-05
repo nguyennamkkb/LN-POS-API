@@ -61,6 +61,24 @@ export class EmployeeService {
         const res = await this.repository.findOne({ where: { "phone": phone } });
         return res ? res : null;
     }
+    async getAllEmployeeN(store_id: number, keySearch: string, page: number): Promise<any> {
+        // dang chon mon
+        // const item = await this.repository.findOne({ where: { "id": id } });
+        // item.updateAt = Date.now()
     
+        const p: number = (page - 1) * 20
+        const sqlString =
+          "Select * from employee_entity where store_id = "+store_id+" and status = 1 and keySearch like '%"+keySearch+"%' LIMIT 20 OFFSET "+p+";";
+          
+        try {
+            const res = await this.repository.query(sqlString)
+            console.log(res)
+          return await res;
+        } catch (error) {
+        //   log("er" + error);
+          return error;
+        }
+        // return await this.repository.update(item.id, item)
+      }
 
 }

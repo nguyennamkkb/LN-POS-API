@@ -80,6 +80,35 @@ export class BooksController {
     }
   }
 
+  @Get("theonhanvienhoackhachhang")
+  async findAllTheoNhanVienHoacKhachHang(
+    @Query("page") page: number = 1,
+    @Query("limit") limit: number = 100,
+    @Query() query
+  ): Promise<ApiResponse<BooksEntity[]>> {
+    try {
+      if (await Common.verifyRequest(query.cksRequest, query.timeRequest)) {
+        const [res, totalCount] = await this.services.findAll2(
+          page,
+          limit,
+          query
+        );
+        return {
+          statusCode: 200,
+          message: "Thành công!",
+          data: res,
+          meta: {
+            totalCount,
+            currentPage: page,
+            totalPages: Math.ceil(totalCount / limit),
+          },
+        };
+      }
+    } catch (error) {
+      return ResponseHelper.error(0, error);
+    }
+  }
+
   @Get("bookinsuccess")
   async getAllBookInSuccess(
     @Query("page") page: number = 1,
@@ -89,6 +118,35 @@ export class BooksController {
     try {
       if (await Common.verifyRequest(query.cksRequest, query.timeRequest)) {
         const [res, totalCount] = await this.services.getAllBookInSuccess(
+          page,
+          limit,
+          query
+        );
+        return {
+          statusCode: 200,
+          message: "Thành công!",
+          data: res,
+          meta: {
+            totalCount,
+            currentPage: page,
+            totalPages: Math.ceil(totalCount / limit),
+          },
+        };
+      }
+    } catch (error) {
+      return ResponseHelper.error(0, error);
+    }
+  }
+
+  @Get("dangphucvu")
+  async getAllBookDangPhucVu(
+    @Query("page") page: number = 1,
+    @Query("limit") limit: number = 100,
+    @Query() query
+  ): Promise<ApiResponse<BooksEntity[]>> {
+    try {
+      if (await Common.verifyRequest(query.cksRequest, query.timeRequest)) {
+        const [res, totalCount] = await this.services.getAllBookDangPhucVu(
           page,
           limit,
           query
@@ -185,6 +243,40 @@ export class BooksController {
     }
   }
 
+  @Get("doanhthunhanvien")
+  async doanhthunhanvien(
+    @Query() query
+  ): Promise<ApiResponse<BooksEntity>> {
+    try {
+      // console.log("doanhthunhanvien")
+      if (await Common.verifyRequest(query.cksRequest, query.timeRequest)) {
+        
+        const res = await this.services.layTongDoanhThuNhanVien(query.store_id,query.idEmployee);
+        // console.log(res)
+        return ResponseHelper.success(res);
+      }
+    } catch (error) {
+      return ResponseHelper.error(0, error);
+    }
+  }
+
+  @Get("tongluotkhachhang")
+  async tongLuotKhachHang(
+    @Query() query
+  ): Promise<ApiResponse<BooksEntity>> {
+    try {
+      console.log("tongluotkhachhang")
+      if (await Common.verifyRequest(query.cksRequest, query.timeRequest)) {
+        
+        const res = await this.services.layTongLuotLamKhachHang(query.store_id,query.idCustomer);
+        // console.log(res)
+        return ResponseHelper.success(res);
+      }
+    } catch (error) {
+      return ResponseHelper.error(0, error);
+    }
+  }
+
   @Get(":id")
   async findOne(
     @Param() param,
@@ -211,17 +303,46 @@ export class BooksController {
         delete body["timeRequest"];
         const updateBook = await this.services.update(body);
 
+        
         if (updateBook.affected == 1 && book.status != 1 && body.status == 1) {
+
+          //cap nhat die cho khach hang
+          let trangThaiCapNhat: number = 0
           const customer = await this.customerServices.findOne(body.idCustomer);
-          customer.loyalty = customer.loyalty + book.amount;
+          var tongDiem: number = 0
+          const dsDichVu  = JSON.parse(""+book.listService)
+          dsDichVu.forEach(e => {
+            tongDiem += e.point
+          });
+        
+          
+          customer.loyalty = customer.loyalty + tongDiem;
           const updateCustomer = await this.customerServices.update(customer);
 
           if (updateCustomer.affected == 1) {
-            return ResponseHelper.success(200, "Thành công");
+            trangThaiCapNhat = 1
           }
+
+          //cap nhat luot cho nhan vien
+          const employee = await this.employeeServices.findOne(body.idEmployee);
+          employee.luotKhach = employee.luotKhach + 1;
+          const updateEmployee = await this.employeeServices.update(employee);
+
+          if (updateEmployee.affected == 1) {
+            trangThaiCapNhat = 2
+          }
+
+          if (trangThaiCapNhat == 2) {
+            return ResponseHelper.success(updateBook);
+          }else {
+            return ResponseHelper.error(0, "Lỗi cập nhật điểm");
+          }
+
         } else if (updateBook.affected == 1) {
           return ResponseHelper.success(updateBook);
         }
+
+
       }
       return ResponseHelper.error(0, "Lỗi2");
     } catch (error) {
@@ -240,4 +361,6 @@ export class BooksController {
       return ResponseHelper.error(0, error);
     }
   }
+
+  
 }

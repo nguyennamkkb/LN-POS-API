@@ -54,7 +54,7 @@ export class EmployeeController {
     }
   }
 
-  // @Public()
+  // // @Public()
   @Get()
   async findAll(
     @Query("page") page: number = 1,
@@ -85,6 +85,36 @@ export class EmployeeController {
       return ResponseHelper.error(0, error);
     }
   }
+
+  // // @Public()
+  // @Get()
+  // async findAll(
+  //   @Query("page") page: number = 1,
+  //   @Query("limit") limit: number = 100,
+  //   @Query() query,
+  //   @Headers('Authorization') auth: string
+  // ): Promise<ApiResponse<EmployeeEntity[]>> {
+  //   try {
+
+  //     if (await Common.verifyRequest(query.cksRequest, query.timeRequest)) {
+  //       const res = await this.service.getAllEmployeeN(
+  //         query.store_id,query.keySearch,page
+  //       );
+  //       return {
+  //         statusCode: 200,
+  //         message: "Thành công!",
+  //         data: res,
+  //         // meta: {
+  //         //   totalCount,
+  //         //   currentPage: page,
+  //         //   totalPages: Math.ceil(totalCount / limit),
+  //         // },
+  //       };
+  //     }
+  //   } catch (error) {
+  //     return ResponseHelper.error(0, error);
+  //   }
+  // }
 
   @Get(":id")
   async findOne(
